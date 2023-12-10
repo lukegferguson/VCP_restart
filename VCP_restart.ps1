@@ -5,9 +5,10 @@ $LogPath = "$LogDir\$LogFile"
 $VCPScript = "$LogDir\Scripts\VCP_Restart.ps1"
 $NGDirectory = "C:\NextGen"
 $VCPexe = "C:\NextGen\VCP.exe"
+$ScriptVer = "0.5"
 
 #Intro Paragraph
-Write-Host "Beginning VCP Registration Script"
+Write-Host "Beginning VCP Registration Script version $ScriptVer"
 
 #Create directory for logs if not already existing
 Write-Host "Verifying log location"
@@ -40,7 +41,8 @@ if ($null -eq (Get-ItemProperty $RunOnce -Name "VCPRegProg")){
 $Progress = (Get-ItemProperty $RunOnce -Name "VCPRegProg").VCPRegProg
 
 #Execute this section on first and second script run
-#I CANNOT get the if statement to match 0 or 1, so just copied an entire new elseif for [1]
+#I CANNOT get the if statement to match (0 -or 1) with the same scriptblock, so just copied an entire new elseif for [1] despite being the same code
+#[2] Also has a lot of functionality overlap, when I get time, keep it DRY
 if ($Progress -eq 0){
         # VCP Registration process attempts to verify files exist, however it ony checks for the ZIPs, not the unpacked files
         #Deleting the ZIP files prior to running VCP registration forces it to re-download the ZIPs and unpack their contents, hopefully correcting anything missing/corrupt
@@ -161,6 +163,9 @@ if ($Progress -eq 0){
         
         }
 
+        #log .NET Installed before changes, as it may be changed during VCP registration
+        $DotNet = dotnet --list-runtimes
+        Out-File -FilePath $LogPath -Append -InputObject "$(get-date) .NET Runtimes currently installed: $DotNet"
         
         #Add Script Location to RunOnce to execute again after reboot
         New-ItemProperty -Path $RunOnce -Name "VCPRegScript" -PropertyType String -Value "Powershell.exe $VCPScript"

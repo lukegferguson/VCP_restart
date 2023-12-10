@@ -1,9 +1,9 @@
 #Variables
-$NGVCP = "C:\NextGen\VCP.exe"
 $LogDir = "C:\OSIS"
-$LogFile = "VCPRegLog.txt"
+$LogFile = "$(get-date -Format "yyyy.MM.dd").VCPRegLog.txt"
 $LogPath = "$LogDir\$LogFile"
-$NGDirectory = "C:\OSIS\TEST"
+$NGDirectory = "C:\NextGen"
+$VCPexe = "C:\NextGen\VCP.exe"
 
 #Intro Paragraph
 Write-Host "Beginning VCP Registration Script"
@@ -28,12 +28,24 @@ $ZIPs | Remove-Item
 Out-File -FilePath $LogPath -Append -InputObject "Operation to delete ZIPs complete"
 
 #log .NET Installed before changes, as it may be changed during VCP registration
-$DotNetPre = dotnet --list-runtimes
-Out-File -FilePath $LogPath -Append -InputObject "$(get-date) .NET Runtimes installed: $DotNetPre"
+$DotNet = dotnet --list-runtimes
+Out-File -FilePath $LogPath -Append -InputObject "$(get-date) .NET Runtimes installed: $DotNet"
+
+#Stop any NextGen or VCP processes before proceeding
+$ProcToStop = get-process NG*
+Out-File -FilePath $LogPath -Append -InputObject "$(get-date) NextGen processes running: $($ProcToStop.Name)"
+foreach ($Proc in $ProcToStop){
+    Stop-Process -Name $proc.Name
+    Out-File -FilePath $LogPath -Append -InputObject "Stopped process $($Proc.name)"
+}
+#Out-File -FilePath $LogPath -Append -InputObject "$(get-date) Stopped processes $StoppedProc"
 
 #Switch user mode to allow for software install, changes how Windows handles INI files
-change user /install | Out-File -FilePath $LogPath -Append -InputObject "$(Get-Date) $_"
+$install = change user /install 
+Out-File -FilePath $LogPath -Append -InputObject "$(Get-Date) $install"
 
 
-
-
+#VCP Registration process start
+Out-File -FilePath $LogPath -Append -InputObject "$(get-date) Starting $VCPexe /r"
+$VCPProc = Start-Process -wait -NoNewWindow -FilePath $VCPexe -ArgumentList '/r' -PassThru
+Out-File -FilePath $LogPath -Append -InputObject "$(get-date) Started $($VcpProc.name)"

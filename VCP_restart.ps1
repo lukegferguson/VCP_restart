@@ -1,10 +1,10 @@
 #Variables
-$LogDir = "C:\OSIS"
-$LogFile = "VCPRegLog.txt"
-$LogPath = "$LogDir\$LogFile"
+$LogPath = "C:\OSIS\VCPRegLog.txt"
+$LogDir = Split-Path $LogPath
 $VCPScript = "$LogDir\Scripts\VCP_Restart.ps1"
-$NGDirectory = "C:\NextGen"
 $VCPexe = "C:\NextGen\VCP.exe"
+$NGDirectory = Split-Path $VCPexe
+$Script = $MyInvocation.MyCommand.ScriptContents
 $ScriptVer = "0.75"
 
 #Initialize Logging function, stop script and notify user on error
@@ -29,13 +29,50 @@ function Write-Log {
 
 Write-log "############## Initialize Script Logging ##############"
 Write-Log "############## OSIS NextGen VCP Registration Script version $ScriptVer ##############"
+Write-Host "OSIS VCP REGISTRATION SCRIPT version $ScriptVer" -foregroundcolor white -backgroundcolor green
+Write-Host "Logs: $LogPath"
 
-
+#Script will attempt to copy itself locally regardless of where it is launched
+#Script must be saved for this to work properly, not if pasted into ISE and run directly
+function Copy-ScriptLocally {
+    $ScriptDir = Split-Path $VCPScript
+    Write-Log "Checking for $ScriptDir"
+    if (Test-Path $ScriptDir){
+        try {
+            Out-File -FilePath $VCPScript -Force -InputObject $Script -ErrorAction Stop | Out-Null
+            Write-Log "Copied script to $VCPScript"
+        } catch {
+            Write-Log "Unable to copy script to $VCPScript, copy manually to $ScriptDir before rebooting"
+            Write-log "System Error $_"
+            write-host "Unable to copy script to $VCPScript, copy manually to $ScriptDir before rebooting" -ForegroundColor Red
+            start-sleep -Seconds 30
+        }
+    } else {
+        try {
+            New-Item -Path $ScriptDir -ItemType Directory -ErrorAction Stop
+            Write-Log "Created $Scriptdir"
+            try {
+                Out-File -FilePath $VCPScript -Force -InputObject $Script -ErrorAction Stop
+                Write-Log "Copied script to $VCPScript"
+            } catch {
+                Write-Log "Unable to copy script to $VCPScript, copy manually to $ScriptDir before rebooting"
+                Write-log "System Error $_"
+                write-host "Unable to copy script to $VCPScript, copy manually to $ScriptDir before rebooting" -ForegroundColor Red
+            }
+        } catch {
+            Write-log "Unable to create $VCPScript, copy manually to $ScriptDir before rebooting"
+            Write-Log "System Error: $_"
+            write-host "Unable to create $VCPScript, copy manually to $ScriptDir before rebooting" -ForegroundColor Red
+            start-sleep -Seconds 30
+        }
+    }
+}
+Copy-ScriptLocally
 
 #Check Registry for progress tracker, create if it doesn't exist
 $RunOnce = "HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce"
 Write-Log "Checking for progress registry entries at $RunOnce"
-if ($null -eq (Get-ItemProperty $RunOnce -Name "VCPRegProg" -ErrorAction Suppress)){
+if ($null -eq (Get-ItemProperty $RunOnce -Name "VCPRegProg" -ErrorAction SilentlyContinue)){
 
     #Set Progress tracker at 0
     try{
@@ -223,5 +260,3 @@ switch ($progress){
         Write-Log -InputObject "real big oops there 😣"
     }
 }
-
-

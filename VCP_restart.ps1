@@ -5,142 +5,218 @@ $LogPath = "$LogDir\$LogFile"
 $VCPScript = "$LogDir\Scripts\VCP_Restart.ps1"
 $NGDirectory = "C:\NextGen"
 $VCPexe = "C:\NextGen\VCP.exe"
-$ScriptVer = "0.5"
+$ScriptVer = "0.75"
 
-#Intro Paragraph
-Write-Host "Beginning VCP Registration Script version $ScriptVer"
-
-#Create directory for logs if not already existing
-Write-Host "Verifying log location"
-If ((Test-Path -Path $logdir) -eq $FALSE) {
-    New-Item -Path 'C:\OSIS' -ItemType Directory | Out-Null
-    Write-Host "Created $logdir"
-} else {
-    Write-Host "Location $logdir already exists"
-}
-
-#Initialize Logging function 
+#Initialize Logging function, stop script and notify user on error
 function Write-Log {
     param ($InputObject)
 
-    Out-File -FilePath $LogPath -Append -InputObject "$(Get-date) $InputObject"
+    try {
+        if (Test-Path $LogDir){
+            Out-File -FilePath $LogPath -Append -InputObject "$(Get-date) $InputObject" -ErrorAction Stop
+        } else {
+            New-Item -Path $LogDir -ItemType Directory -ErrorAction Stop
+            Out-File -FilePath $LogPath -Append -InputObject "$(Get-date) $InputObject" -ErrorAction Stop
+         }
+    } catch {
+        Write-Host "UNABLE TO WRITE LOG FILE" -ForegroundColor red -BackgroundColor White
+        Write-host $InputObject
+        Write-host "System error: $_" -ForegroundColor red
+        Write-host "Ctrl+C to exit" -ForegroundColor Green
+        start-sleep -Seconds 100000
+    }
 }
 
-Write-Log -InputObject "####### Initialize VCP Registraion Script Logging ######"
+Write-log "############## Initialize Script Logging ##############"
+Write-Log "############## OSIS NextGen VCP Registration Script version $ScriptVer ##############"
 
-#Check Registry for progress
+
+
+#Check Registry for progress tracker, create if it doesn't exist
 $RunOnce = "HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce"
-if ($null -eq (Get-ItemProperty -ErrorAction SilentlyContinue $RunOnce -Name "VCPRegProg")){
+Write-Log "Checking for progress registry entries at $RunOnce"
+if ($null -eq (Get-ItemProperty $RunOnce -Name "VCPRegProg" -ErrorAction Suppress)){
 
     #Set Progress tracker at 0
-    New-ItemProperty -Path $RunOnce -Name "VCPRegProg" -PropertyType Dword -value 0 | Out-Null
+    try{
+        New-ItemProperty -Path $RunOnce -Name "VCPRegProg" -PropertyType Dword -value 0 -ErrorAction stop
+    }
+    catch {
+        Write-Log "Unable to create registry entry"
+        Write-Host "Unable to create registry entry, exiting in 30 seconds" -ForegroundColor Red
+        Write-Host "System Error: $_"
+        Start-Sleep -Seconds 30
+        exit
+    }
     
     #Write Logs
-    Write-Log -InputObject "Progress registry entry created" 
-    Write-Log -InputObject "VCP Registration Script Progress: $((Get-ItemProperty $RunOnce -Name VCPRegProg).VCPRegProg)"
+    Write-Log  "Progress registry entry created" 
+    Write-Log  "VCP Registration Script Progress: $((Get-ItemProperty $RunOnce -Name VCPRegProg).VCPRegProg)"
 
 } else {
-    Write-Log -InputObject "VCP Registration Script Progress: $((Get-ItemProperty $RunOnce -Name VCPRegProg).VCPRegProg)"
+    
+    Write-Log "VCP Registration Script Progress: $((Get-ItemProperty $RunOnce -Name VCPRegProg).VCPRegProg)"
+
 }
 
-#Check VCP Registration Progress
+#Initialize script variable from registry entry
 $Progress = (Get-ItemProperty $RunOnce -Name "VCPRegProg").VCPRegProg
 
-#Execute this section on first and second script run
-#Lot of functionality overlap between 0/1 and 2 loops, when I get time, keep it DRY
-switch ($progress){
-    {($_ -le 1)} {
-         # VCP Registration process attempts to verify files exist, however it ony checks for the ZIPs, not the unpacked files
+#Function to start VCP process
+#-Registration $true causes /r switch to be used
+#-ZipDelete $True will delete all ZIP files in $NGDirectory
+function Start-VCP {
+    param(
+        $Register = $false,
+        $ZipDelete = $False
+    )
+
+    Write-Log "Starting $VCPexe Register=$Register, ZipDelete=$ZipDelete"
+
+    if (Test-Path -Path $VCPexe){
+        Write-log "EXE exists: $VCPexe"
+    }
+    else {
+        Write-log "$VCPexe not found"
+        Write-Host "Executable not found at $VCPexe" -ForegroundColor Red
+        Write-Host "Exiting Script in 30 seconds"
+        Start-Sleep -Seconds 30
+        exit
+    }
+
+    if ($ZipDelete -eq $true){  
+        # VCP Registration process attempts to verify files exist, however it ony checks for the ZIPs, not the unpacked files
         #Deleting the ZIP files prior to running VCP registration forces it to re-download the ZIPs and unpack their contents, hopefully correcting anything missing/corrupt
         $ZIPs = Get-ChildItem $NGDirectory | Where-Object -Property Name -like *.zip
         Write-Log -InputObject ".ZIP files contained in ($NGDirectory): $ZIPs"
-        $ZIPs | Remove-Item
+       try { 
+        $ZIPs | Remove-Item -ErrorAction Stop
         Write-Log -InputObject "Operation to delete ZIPs complete"
-
-        #log .NET Installed before changes, as it may be changed during VCP registration
-        $DotNet = dotnet --list-runtimes
-        Write-Log -InputObject ".NET Runtimes currently installed: $DotNet"
-
-        #Stop any NextGen processes before proceeding
-        $ProcToStop = get-process NG*
-        Write-Log -InputObject "NextGen processes running: $($ProcToStop.Name)"
-        foreach ($Proc in $ProcToStop){
-            Stop-Process -Name $proc.Name
-            Write-Log -InputObject "Stopped process $($Proc.name)"
+        } catch {
+            Write-Log "Operation to delete ZIPs incomplete"
+            Write-log "System Error $_"
         }
+    }
 
-        #Switch user mode to allow for software install, changes how Windows handles INI files
-        $install = change user /install 
-        Write-Log -InputObject "$install"
+    #log .NET Installed before changes, as it may be changed during VCP registration
+    try {
+        Write-Log ".NET Runtimes currently installed: $(dotnet --list-runtimes)" -ErrorAction Stop
+    }
+    catch {
+        Write-Log "dotnet --list-runtimes not returning, likely none installed"
+        Write-Log "System Error: $_"
+    }
 
+    #Stop any NextGen processes before proceeding
+    $ProcToStop = get-process NG*
+    Write-Log "NextGen processes running: $($ProcToStop.Name)"
+    foreach ($Proc in $ProcToStop){
+        try {
+            Stop-Process -Name $proc.Name -ErrorAction stop
+            Write-Log "Stopped process $($Proc.name)"
+        }
+        catch {
+            Write-Log "Unable to stop process $($Proc.name) $($Error)"
+        }
+    }
 
-        #VCP Registration process start
+    #Switch user mode to allow for software install, changes how Windows handles INI files
+    $install = change user /install
+    Write-Log -InputObject "$install"
+
+    #VCP Registration process start based on /r switch
+    if ($registration) {
         Write-Log -InputObject "Starting $VCPexe /r"
-        Start-Process -FilePath $VCPexe -ArgumentList '/r'
+        try { Start-Process -FilePath $VCPexe -ArgumentList "/r" -ErrorAction stop } 
+        catch {
+        Write-log "System Error: $_"
+        Write-Log "Exiting script"
+        exit
+    }
+    } else {
+        Write-Log -InputObject "Starting $VCPexe no switches"
+        try  { Start-Process -FilePath $VCPexe -ErrorAction Stop }
+        catch { 
+        Write-log "System Error: $_"
+        Write-Log "Exiting script"
+        exit
+    }
+}
+    do { Start-Sleep -Seconds 1} while ($null -ne $(get-process VCP*))
 
-        do { Start-Sleep -Seconds 1} while ($null -ne $(get-process VCP*))
+    Write-Log -InputObject "VCP Process Exited"    
+}
 
-        Write-Log -InputObject "VCP /r Process Exited"
-        
-        #Add Script Location to RunOnce to execute again after reboot
-        New-ItemProperty -Path $RunOnce -Name "VCPRegScript" -PropertyType String -Value "Powershell.exe $VCPScript"
-        Write-Log -InputObject "Script location added to registry RunOnce: ($VCPScript)" 
+#Add Script Location to RunOnce to execute again after reboot
+function Start-NextStep {
 
-        #Increase progress count
-        $Progress += 1
-        Set-ItemProperty -Path $RunOnce -Name "VCPRegProg" -Value $($progress)
-        Out-File -FilePath $LogPath -Append -InputObject "Script will resume when an administrator logs in"
-        Out-File -FilePath $LogPath -Append -InputObject "Updated registry to $progress, rebooting..."
-        Write-Host "Machine Will REBOOT IN 15 SECONDS, script will resume when an administrator logs in" -ForegroundColor Red
-        Start-Sleep -Seconds 15
-        Restart-Computer -Force
+    param(
+        $Reboot = $false
+    )
+
+    Write-Log "Starting Next Script Step, Reboot: $reboot"
+
+    try {
+        New-ItemProperty -Path $RunOnce -Name "VCPRegScript" -PropertyType String -Value "Powershell.exe $VCPScript" -ErrorAction Stop
+        Write-Log -InputObject "Script location added to registry RunOnce: $VCPScript" 
+    } catch {
+        Write-Log "Unable to write script location to $runonce"
+        Write-log "System error: $_"
+        exit
+    }
+
+    #Increase progress count, set registry key
+    $Script:Progress += 1
+    try { 
+        Set-ItemProperty -Path $RunOnce -Name "VCPRegProg" -Value $($progress) -ErrorAction stop
+        Write-Log "Script will resume when an administrator logs in"
+        Write-Log "Updated progress in registry to $progress"
+
+        #Notify and reboot
+        if ($Reboot) {
+            Write-Host "Machine Will REBOOT IN 15 SECONDS, script will resume when an administrator logs in" -ForegroundColor Red
+            Start-Sleep -Seconds 15
+            Restart-Computer -Force
+        }
+    }
+    catch {
+        Write-Log "Unable to write progress in registry"
+        Write-log "System error: $_"
+        exit
+    }
+}
+
+#Change script behavior based on progress tracking registry entry
+switch ($progress){
+    #Execute this section on first and second script run
+    {($_ -le 1)} {
+        Start-VCP -Register $true -ZipDelete $true
+        Start-NextStep -Reboot $true
     }
 
     #Run on third iteration of script
     (2) {
-         #VCP process start (without /r switch)
-         Write-Log -InputObject "Starting $VCPexe"
-         Start-Process -FilePath $VCPexe
- 
-         do { Start-Sleep -Seconds 1} while ($null -ne $(get-process VCP*))
- 
-         Write-Log -InputObject "VCP Process Exited"
- 
-         1..3 | foreach {
-             
-            #Stop any NextGen processes before running again
-             $ProcToStop = get-process NG*
-             Write-Log -InputObject "NextGen processes running: $($ProcToStop.Name)"
-             foreach ($Proc in $ProcToStop){
-                 Stop-Process -Name $proc.Name
-                 Write-Log -InputObject "Stopped process $($Proc.name)"
- 
-             #VCP process start (without /r switch)
-             Write-Log -InputObject "Starting $VCPexe"
-             Start-Process -FilePath $VCPexe
- 
-             #Wwait for VCP to close before exiting
-             do { Start-Sleep -Seconds 1} while ($null -ne $(get-process VCP*))
-             Write-Log -InputObject "VCP Process Exited"}
-            }
+        1..4 | foreach { Start-VCP }
+        Start-NextStep -Reboot $true
     }
-        
+
     #Fourth iteration of script
     (3) {
-            #log .NET Installed before changes, as it may be changed during VCP registration
-    $DotNet = dotnet --list-runtimes
-    Write-Log -InputObject ".NET Runtimes currently installed: $DotNet"
-    
-    #Switch user mode to allow for software install, changes how Windows handles INI files
-    $execute = change user /execute
-    Write-Log -InputObject "$execute"
-    
-    #Delete progress tracking registry entry
-    Remove-ItemProperty -Path $RunOnce -Name "VCPRegProg" | Out-Null
-    Out-File -FilePath $LogPath -Append -InputObject "Removed registry for progress tracking"
-    
-    #Finalize Logs
-    Write-Log -InputObject "##### VCP Registration Complete #####"
+        #Switch user mode back to normal
+        $execute = change user /execute
+        Write-Log -InputObject "$execute"
+        
+        #Delete progress tracking registry entry
+        #RunOnce scripts are removed upon being run, so no need to remove
+        try {
+            Remove-ItemProperty -Path $RunOnce -Name "VCPRegProg" -ErrorAction Stop
+            Write-Log "Removed registry for progress tracking"
+        } catch {
+            Write-Log "Unable to remove tracking registry entry"
+        }
+        
+        #Finalize Logs
+        Write-Log -InputObject "##### VCP Registration Complete #####"
     }
         
     default {

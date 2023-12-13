@@ -1,0 +1,153 @@
+12/10/2023 21:41:00 ############## Initialize Script Logging ##############
+12/10/2023 21:41:00 ############## OSIS NextGen VCP Registration Script version 0.75 ##############
+12/10/2023 21:41:00 Checking for C:\OSIS\Scripts
+12/10/2023 21:41:00 Created C:\OSIS\Scripts
+12/10/2023 21:41:00 Copied script to C:\OSIS\Scripts\VCP_Restart.ps1
+12/10/2023 21:41:00 Checking for progress registry entries at HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce
+12/10/2023 21:41:00 VCP Registration Script Progress: 1
+12/10/2023 21:41:00 Starting C:\NextGen\VCP.exe Register=True, ZipDelete=True
+12/10/2023 21:41:00 EXE exists: C:\NextGen\VCP.exe
+12/10/2023 21:41:00 .ZIP files contained in (C:\NextGen): NG-AccusoftIGNet.zip NG-AccusoftIGPro.zip NG-CefSharp.zip NG-ClientPortal.zip NG-Infragistics.zip NG-InstaMedAPI.zip NG-Nuget.zip NG-OsLibraries.zip NG-ReportManagers.zip NG-Templates.zip NG-TX.zip OptikImageFiles.zip
+12/10/2023 21:41:00 Operation to delete ZIPs complete
+12/10/2023 21:41:01 .NET Runtimes currently installed: Microsoft.NETCore.App 7.0.4 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+12/10/2023 21:41:01 NextGen processes running: 
+12/10/2023 21:41:01 User session is ready to install applications.
+12/10/2023 21:41:01 Starting C:\NextGen\VCP.exe no switches
+12/10/2023 21:41:22 VCP Process Exited
+12/10/2023 21:41:22 Starting Next Script Step, Reboot: True
+12/10/2023 21:41:22 Script location added to registry RunOnce: C:\OSIS\Scripts\VCP_Restart.ps1
+12/10/2023 21:41:22 Script will resume when an administrator logs in
+12/10/2023 21:41:22 Updated progress in registry to 2
+12/10/2023 22:25:33 ############## Initialize Script Logging ##############
+12/10/2023 22:25:33 ############## OSIS NextGen VCP Registration Script version 0.75 ##############
+12/10/2023 22:25:33 Checking for C:\OSIS\Scripts
+12/10/2023 22:25:33 Created C:\OSIS\Scripts
+12/10/2023 22:25:33 Copied script to C:\OSIS\Scripts\VCP_Restart.ps1
+12/10/2023 22:25:33 Checking for progress registry entries at HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce
+12/10/2023 22:25:33 VCP Registration Script Progress: 2
+12/10/2023 22:25:33 Starting C:\NextGen\VCP.exe Register=False, ZipDelete=False
+12/10/2023 22:25:33 EXE exists: C:\NextGen\VCP.exe
+12/10/2023 22:25:33 .NET Runtimes currently installed: Microsoft.NETCore.App 7.0.4 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+12/10/2023 22:25:33 NextGen processes running: NGAppLauncher
+12/10/2023 22:25:33 Stopped process NGAppLauncher
+12/10/2023 22:25:33 User session is ready to install applications.
+12/10/2023 22:25:33 Starting C:\NextGen\VCP.exe no switches
+12/10/2023 22:25:37 VCP Process Exited
+12/10/2023 22:25:37 Starting C:\NextGen\VCP.exe Register=False, ZipDelete=False
+12/10/2023 22:25:37 EXE exists: C:\NextGen\VCP.exe
+12/10/2023 22:25:37 .NET Runtimes currently installed: Microsoft.NETCore.App 7.0.4 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+12/10/2023 22:25:37 NextGen processes running: NGAppLauncher
+12/10/2023 22:25:37 Stopped process NGAppLauncher
+12/10/2023 22:25:37 User session is ready to install applications.
+12/10/2023 22:25:37 Starting C:\NextGen\VCP.exe no switches
+12/10/2023 22:25:41 VCP Process Exited
+12/10/2023 22:25:41 Starting C:\NextGen\VCP.exe Register=False, ZipDelete=False
+12/10/2023 22:25:41 EXE exists: C:\NextGen\VCP.exe
+12/10/2023 22:25:41 .NET Runtimes currently installed: Microsoft.NETCore.App 7.0.4 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+12/10/2023 22:25:41 NextGen processes running: NGAppLauncher
+12/10/2023 22:25:41 Stopped process NGAppLauncher
+12/10/2023 22:25:41 User session is ready to install applications.
+12/10/2023 22:25:41 Starting C:\NextGen\VCP.exe no switches
+12/10/2023 22:25:45 VCP Process Exited
+12/10/2023 22:25:45 Starting C:\NextGen\VCP.exe Register=False, ZipDelete=False
+12/10/2023 22:25:45 EXE exists: C:\NextGen\VCP.exe
+12/10/2023 22:25:46 .NET Runtimes currently installed: Microsoft.NETCore.App 7.0.4 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+12/10/2023 22:25:46 NextGen processes running: NGAppLauncher
+12/10/2023 22:25:46 Stopped process NGAppLauncher
+12/10/2023 22:25:46 User session is ready to install applications.
+12/10/2023 22:25:46 Starting C:\NextGen\VCP.exe no switches
+12/10/2023 22:25:50 VCP Process Exited
+12/10/2023 22:25:50 Starting Next Script Step, Reboot: True
+12/10/2023 22:25:50 Unable to write script location to HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce
+12/10/2023 22:25:50 System error: The property already exists.
+12/10/2023 22:28:32 ############## Initialize Script Logging ##############
+12/10/2023 22:28:32 ############## OSIS NextGen VCP Registration Script version 0.75 ##############
+12/10/2023 22:28:32 Checking for C:\OSIS\Scripts
+12/10/2023 22:28:32 Copied script to C:\OSIS\Scripts\VCP_Restart.ps1
+12/10/2023 22:28:32 Checking for progress registry entries at HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce
+12/10/2023 22:28:32 VCP Registration Script Progress: 2
+12/10/2023 22:28:32 Starting C:\NextGen\VCP.exe Register=False, ZipDelete=False
+12/10/2023 22:28:32 EXE exists: C:\NextGen\VCP.exe
+12/10/2023 22:28:32 .NET Runtimes currently installed: Microsoft.NETCore.App 7.0.4 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+12/10/2023 22:28:32 NextGen processes running: NGAppLauncher
+12/10/2023 22:28:32 Stopped process NGAppLauncher
+12/10/2023 22:28:32 User session is ready to install applications.
+12/10/2023 22:28:32 Starting C:\NextGen\VCP.exe no switches
+12/10/2023 22:28:36 VCP Process Exited
+12/10/2023 22:28:36 Starting C:\NextGen\VCP.exe Register=False, ZipDelete=False
+12/10/2023 22:28:36 EXE exists: C:\NextGen\VCP.exe
+12/10/2023 22:28:36 .NET Runtimes currently installed: Microsoft.NETCore.App 7.0.4 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+12/10/2023 22:28:36 NextGen processes running: NGAppLauncher
+12/10/2023 22:28:36 Stopped process NGAppLauncher
+12/10/2023 22:28:36 User session is ready to install applications.
+12/10/2023 22:28:36 Starting C:\NextGen\VCP.exe no switches
+12/10/2023 22:28:40 VCP Process Exited
+12/10/2023 22:28:40 Starting C:\NextGen\VCP.exe Register=False, ZipDelete=False
+12/10/2023 22:28:40 EXE exists: C:\NextGen\VCP.exe
+12/10/2023 22:28:40 .NET Runtimes currently installed: Microsoft.NETCore.App 7.0.4 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+12/10/2023 22:28:40 NextGen processes running: NGAppLauncher
+12/10/2023 22:28:40 Stopped process NGAppLauncher
+12/10/2023 22:28:40 User session is ready to install applications.
+12/10/2023 22:28:40 Starting C:\NextGen\VCP.exe no switches
+12/10/2023 22:28:44 VCP Process Exited
+12/10/2023 22:28:44 Starting C:\NextGen\VCP.exe Register=False, ZipDelete=False
+12/10/2023 22:28:44 EXE exists: C:\NextGen\VCP.exe
+12/10/2023 22:28:44 .NET Runtimes currently installed: Microsoft.NETCore.App 7.0.4 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+12/10/2023 22:28:44 NextGen processes running: NGAppLauncher
+12/10/2023 22:28:44 Stopped process NGAppLauncher
+12/10/2023 22:28:44 User session is ready to install applications.
+12/10/2023 22:28:44 Starting C:\NextGen\VCP.exe no switches
+12/10/2023 22:28:48 VCP Process Exited
+12/10/2023 22:28:48 Starting Next Script Step, Reboot: True
+12/10/2023 22:28:48 Unable to write script location to HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce
+12/10/2023 22:28:48 System error: The property already exists.
+12/10/2023 22:42:57 ############## Initialize Script Logging ##############
+12/10/2023 22:42:57 ############## OSIS NextGen VCP Registration Script version 0.75 ##############
+12/10/2023 22:42:57 Checking for C:\OSIS\Scripts
+12/10/2023 22:42:57 Copied script to C:\OSIS\Scripts\VCP_Restart.ps1
+12/10/2023 22:42:57 Checking for progress registry entries at HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce
+12/10/2023 22:42:57 VCP Registration Script Progress: 2
+12/10/2023 22:42:57 Starting C:\NextGen\VCP.exe Register=False, ZipDelete=False
+12/10/2023 22:42:57 EXE exists: C:\NextGen\VCP.exe
+12/10/2023 22:42:57 .NET Runtimes currently installed: Microsoft.NETCore.App 7.0.4 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+12/10/2023 22:42:57 NextGen processes running: 
+12/10/2023 22:42:57 User session is ready to install applications.
+12/10/2023 22:42:57 Starting C:\NextGen\VCP.exe no switches
+12/10/2023 22:43:05 VCP Process Exited
+12/10/2023 22:43:05 Starting C:\NextGen\VCP.exe Register=False, ZipDelete=False
+12/10/2023 22:43:05 EXE exists: C:\NextGen\VCP.exe
+12/10/2023 22:43:05 .NET Runtimes currently installed: Microsoft.NETCore.App 7.0.4 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+12/10/2023 22:43:05 NextGen processes running: NGAppLauncher
+12/10/2023 22:43:05 Stopped process NGAppLauncher
+12/10/2023 22:43:05 User session is ready to install applications.
+12/10/2023 22:43:05 Starting C:\NextGen\VCP.exe no switches
+12/10/2023 22:43:09 VCP Process Exited
+12/10/2023 22:43:09 Starting C:\NextGen\VCP.exe Register=False, ZipDelete=False
+12/10/2023 22:43:09 EXE exists: C:\NextGen\VCP.exe
+12/10/2023 22:43:09 .NET Runtimes currently installed: Microsoft.NETCore.App 7.0.4 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+12/10/2023 22:43:09 NextGen processes running: NGAppLauncher
+12/10/2023 22:43:09 Stopped process NGAppLauncher
+12/10/2023 22:43:09 User session is ready to install applications.
+12/10/2023 22:43:09 Starting C:\NextGen\VCP.exe no switches
+12/10/2023 22:43:13 VCP Process Exited
+12/10/2023 22:43:13 Starting C:\NextGen\VCP.exe Register=False, ZipDelete=False
+12/10/2023 22:43:13 EXE exists: C:\NextGen\VCP.exe
+12/10/2023 22:43:13 .NET Runtimes currently installed: Microsoft.NETCore.App 7.0.4 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+12/10/2023 22:43:13 NextGen processes running: NGAppLauncher
+12/10/2023 22:43:13 Stopped process NGAppLauncher
+12/10/2023 22:43:14 User session is ready to install applications.
+12/10/2023 22:43:14 Starting C:\NextGen\VCP.exe no switches
+12/10/2023 22:43:18 VCP Process Exited
+12/10/2023 22:43:18 Starting Next Script Step, Reboot: True
+12/10/2023 22:43:18 Script location added to registry RunOnce: C:\OSIS\Scripts\VCP_Restart.ps1
+12/10/2023 22:43:18 Script will resume when an administrator logs in
+12/10/2023 22:43:18 Updated progress in registry to 3
+12/10/2023 22:45:14 ############## Initialize Script Logging ##############
+12/10/2023 22:45:14 ############## OSIS NextGen VCP Registration Script version 0.75 ##############
+12/10/2023 22:45:14 Checking for C:\OSIS\Scripts
+12/10/2023 22:45:14 Copied script to C:\OSIS\Scripts\VCP_Restart.ps1
+12/10/2023 22:45:14 Checking for progress registry entries at HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce
+12/10/2023 22:45:14 VCP Registration Script Progress: 3
+12/10/2023 22:45:14 User session is ready to execute applications.
+12/10/2023 22:45:14 Removed registry for progress tracking
+12/10/2023 22:45:14 ##### VCP Registration Complete #####

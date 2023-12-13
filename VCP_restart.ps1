@@ -101,6 +101,12 @@ if ($null -eq (Get-ItemProperty $RunOnce -Name "VCPRegProg" -ErrorAction Silentl
 #Initialize script variable from registry entry
 $Progress = (Get-ItemProperty $RunOnce -Name "VCPRegProg").VCPRegProg
 
+<#//BUG 
+There is a reboot dialogue that pops up (usually only on first VCP.exe /r invocation)
+I have not tested what happens when "Yes" is clicked, but I'm guessing it wouldn't hit start-nextstep before the reboot
+Would a finally block calling start-nextstep work? 
+Is it a good idea - maybe should just try to update the reboot reg tracking in a finally block?
+/#>
 #Function to start VCP process
 #-Registration $true causes /r switch to be used
 #-ZipDelete $True will delete all ZIP files in $NGDirectory

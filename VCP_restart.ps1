@@ -1,7 +1,7 @@
 #Variables
 $LogPath = "C:\OSIS\VCPRegLog.txt"
 $LogDir = Split-Path $LogPath
-$VCPScript = "$LogDir\Scripts\VCP_Restart.ps1"
+$VCPScript = "$LogDir\Scripts\VCP_Register.ps1"
 $VCPexe = "C:\NextGen\VCP.exe"
 $NGDirectory = Split-Path $VCPexe
 $Script = $MyInvocation.MyCommand.ScriptContents
@@ -22,8 +22,10 @@ function Write-Log {
         Write-Host "UNABLE TO WRITE LOG FILE" -ForegroundColor red -BackgroundColor White
         Write-host $InputObject
         Write-host "System error: $_" -ForegroundColor red
-        Write-host "Ctrl+C to exit" -ForegroundColor Green
-        start-sleep -Seconds 100000
+        do {
+            $EXIT = read-host -Prompt "EXIT to quit"
+        } until ($exit -eq "exit")
+        exit
     }
 }
 
